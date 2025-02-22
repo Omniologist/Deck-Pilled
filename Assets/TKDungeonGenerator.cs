@@ -18,10 +18,7 @@ public class TKDungeonGenerator : MonoBehaviour
 
     [SerializeField] int minConnectingRoomSize = 2;
     [SerializeField] int maxConnectingRoomSize = 4;
-    [SerializeField] float seperationTime = 10f;
 
-    [Header("Physics Settings")]
-    int layerMask = 8;
 
     [Header("Visualization")]
     [SerializeField] bool showRooms = true;
@@ -35,19 +32,16 @@ public class TKDungeonGenerator : MonoBehaviour
 
     private List<Room> _rooms = new List<Room>();
     private List<Room> _mainRooms = new List<Room>();
-    private List<GameObject> _roomObjects = new List<GameObject>();
 
     class Room
     {
         public RectInt Bounds;
-        public Vector2Int Center;
         public bool IsMainRoom;
-        public GameObject gameObject;
+
 
         public Room(RectInt bounds, bool isMainRoom)
         {
             Bounds = bounds;
-            Center = Vector2Int.RoundToInt(bounds.center);
             IsMainRoom = isMainRoom;
         }
     }
@@ -62,12 +56,6 @@ public class TKDungeonGenerator : MonoBehaviour
     private void ClearDungeon()
     {
         _rooms.Clear();
-
-        foreach (GameObject roomObj in _roomObjects)
-        {
-            Destroy(roomObj);
-        }
-        _roomObjects.Clear();
     }
 
 
@@ -104,51 +92,51 @@ public class TKDungeonGenerator : MonoBehaviour
         {
             _mainRooms.Add(newRoom);
         }
-
-        GameObject roomObj = new GameObject("Room");
-        roomObj.transform.position = new Vector3(newRoom.Center.x, 0, newRoom.Center.y);
-        roomObj.layer = LayerMask.NameToLayer("roomLayer");
-
-        BoxCollider collider = roomObj.AddComponent<BoxCollider>();
-        collider.size = new Vector3(width, 1, height);
-        collider.isTrigger = false;
-        Rigidbody rb = roomObj.AddComponent<Rigidbody>();
-        rb.isKinematic = false;
-        rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
-
-        newRoom.gameObject = roomObj;
-        _roomObjects.Add(roomObj);
     }
 
     private void SeperateRooms()
     {
-        Physics.simulationMode = SimulationMode.Script;
-        float timer = 0;
-        while (timer < seperationTime)
+        bool anyOverlap = true;
+        while (anyOverlap)
         {
-            Physics.Simulate(Time.fixedDeltaTime);
-            timer += Time.fixedDeltaTime;
-        }
-        Physics.simulationMode = SimulationMode.FixedUpdate;
+            anyOverlap = false;
+            for (int current = 0; current < _rooms.Count; current++)
+            {
+                for (int other = 0; other < _rooms.Count; other++)
+                {
+                    Room a = _rooms[current];
+                    Room b = _rooms[other];
 
-        foreach (Room room in _rooms)
-        {
-            Vector3 newPos = room.gameObject.transform.position;
-            room.Center = new Vector2Int(Mathf.RoundToInt(newPos.x), Mathf.RoundToInt(newPos.z));
-            room.Bounds.x = room.Center.x - room.Bounds.width / 2;
-            room.Bounds.y = room.Center.y - room.Bounds.height / 2;
-            room.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                    if (a == b) { continue; }
+
+
+                    if (a.Bounds.Overlaps(b.Bounds))
+                    {
+                        anyOverlap = true;
+
+                        Vector2 direction = (Vector2)(a.Bounds.center - b.Bounds.center).normalized;
+
+                        Vector2Int aNewPos = Vector2Int.RoundToInt((Vector2)a.Bounds.center + direction);
+                        Vector2Int bNewPos = Vector2Int.RoundToInt((Vector2)b.Bounds.center - direction);
+
+                        a.Bounds.position = new Vector2Int(aNewPos.x - a.Bounds.width / 2, aNewPos.y - a.Bounds.height / 2);
+                        b.Bounds.position = new Vector2Int(bNewPos.x - b.Bounds.width / 2, bNewPos.y - b.Bounds.height / 2);
+
+                    }
+                }
+            }
         }
     }
 
     private void OnDrawGizmos()
     {
+
         if (showRooms)
         {
             Gizmos.color = roomColor;
             foreach (Room room in _rooms)
             {
-                Gizmos.DrawWireCube(new Vector3(room.Center.x, 0, room.Center.y), new Vector3(room.Bounds.width, 0.1f, room.Bounds.height));
+                Gizmos.DrawWireCube(new Vector3(room.Bounds.center.x, 0, room.Bounds.center.y), new Vector3(room.Bounds.width, 0.1f, room.Bounds.height));
             }
 
         }

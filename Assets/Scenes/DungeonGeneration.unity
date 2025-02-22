@@ -119,53 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &59464382
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 59464384}
-  - component: {fileID: 59464383}
-  m_Layer: 0
-  m_Name: BSP
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &59464383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 59464382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d0e7f557a2e49043960965842d62faf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dungeonWidth: 100
-  dungeonHeight: 100
-  minRoomArea: 500
---- !u!4 &59464384
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 59464382}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 193.10194, y: -204.05923, z: 195.47932}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &329914479
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,6 +148,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7ead4ac10c45de40ba35d463b80e4d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dungeonRadius: 10
+  roomCount: 15
+  connectingRoomCount: 15
+  minRoomSize: 6
+  maxRoomSize: 12
+  minConnectingRoomSize: 2
+  maxConnectingRoomSize: 4
+  showRooms: 1
+  showTriangulation: 1
+  showMST: 1
+  showCorridors: 1
+  roomColor: {r: 1, g: 1, b: 1, a: 1}
+  traingulationColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  mstColor: {r: 0, g: 1, b: 0, a: 1}
+  corridorColor: {r: 0, g: 0, b: 1, a: 1}
 --- !u!4 &329914481
 Transform:
   m_ObjectHideFlags: 0
@@ -474,5 +442,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 633662415}
   - {fileID: 1967327026}
-  - {fileID: 59464384}
   - {fileID: 329914481}
